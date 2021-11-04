@@ -15,7 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -100,7 +99,6 @@ public class EmployeeServiceImplTest implements BaseTest {
 		employeRepo.deleteAll();
 		entrepriseRepository.deleteAll();
 		departementRepository.deleteAll();
-		
 		//Deuxieme methode
 		//employeRepo.deleteAll();
 		
@@ -199,15 +197,17 @@ public class EmployeeServiceImplTest implements BaseTest {
     	boolean test = false;
     	employeServiceImpl1.affecterEmployeADepartement(employeA.getId(), department.getId());
     	Optional<Employe> empoloye = employeRepo.findById(employeA.getId());
-    	List<Departement>departementsList = empoloye.get().getDepartements();
-    	for(int i = 0 ; i<departementsList.size(); i++) {
-    		if(departementsList.get(i).getId() ==department.getId() ) {
-    			test = true;
-    		}
-    		
+    	if(empoloye.isPresent()){
+    		List<Departement>departementsList = empoloye.get().getDepartements();
+        	for(int i = 0 ; i<departementsList.size(); i++) {
+        		if(departementsList.get(i).getId() ==department.getId() ) {
+        			test = true;
+        		}
+        		
+        	}
+    		assertThat(test).isTrue();
+    		log.info("employee departement are affected with success");
     	}
-		assertThat(test).isTrue();
-		log.info("employee departement are affected with success");
 
     }
     
