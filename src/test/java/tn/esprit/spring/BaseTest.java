@@ -4,7 +4,7 @@ package tn.esprit.spring;
 
 public interface BaseTest {
 
-	  public void SetUp();
+	  public void setUp();
 
-	  public  void TearDown() ;
+	  public  void tearDown() ;
 	}

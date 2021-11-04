@@ -2,10 +2,10 @@ package tn.esprit.spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -50,10 +50,8 @@ public class EmployeeServiceImplTest implements BaseTest {
 	
 	@Autowired
 	EntrepriseServiceImpl entrepriseServiceImpl;
-	private Employe employeA,employeB,employeC,employe;
-	private Contrat contrat;
+	private Employe employeA;
 	private Departement department;
-	private Entreprise entreprise;
 	
 	
      @Test
@@ -71,15 +69,15 @@ public class EmployeeServiceImplTest implements BaseTest {
  
 	@Override
 	@Before
-	public void SetUp() {
+	public void setUp() {
 
-		entreprise = entrepriseRepository.save(new Entreprise("HP","equipement"));
+		Entreprise entreprise = entrepriseRepository.save(new Entreprise("HP","equipement"));
 		department = departementRepository.save(new Departement("RH"));
 		department.setEntreprise(entreprise);
 		departementRepository.save(department);
-		employeA = new Employe("user", "benUser", "user@gmail.com", false, Role.INGENIEUR);		
-		employeB = new Employe("employe", "benEmployee", "employe@gmail.com", true, Role.ADMINISTRATEUR);
-		employeC = new Employe("Foulen", "benFoulen", "foulen@gmail.com", true, Role.CHEF_DEPARTEMENT);
+		employeA = new Employe("user", "benUser", "benuser@gmail.com", false, Role.INGENIEUR);		
+		Employe employeB = new Employe("employe", "benEmployee", "employe@gmail.com", true, Role.ADMINISTRATEUR);
+		Employe employeC = new Employe("Foulen", "benFoulen", "foulen@gmail.com", true, Role.CHEF_DEPARTEMENT);
 		
 		List<Employe> employeList = new ArrayList<>();
 		    employeList.add(employeA);
@@ -88,19 +86,23 @@ public class EmployeeServiceImplTest implements BaseTest {
 		    
 	
 		employeRepo.saveAll(employeList);
-		contrat = new Contrat(new Date(2021, 01, 05), "TypeCont", 5000);
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 2020);
+		cal.set(Calendar.MONTH, Calendar.JANUARY);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		Date dateRepresentation = cal.getTime();
+		
+		Contrat contrat = new Contrat(dateRepresentation, "TypeCont", 5000);
 		contrat.setEmploye(employeA);
 		contratRepository.save(contrat);
 	}
 
 	@Override
 	@After
-	public void TearDown() {
+	public void tearDown() {
 		employeRepo.deleteAll();
 		entrepriseRepository.deleteAll();
 		departementRepository.deleteAll();
-		//Deuxieme methode
-		//employeRepo.deleteAll();
 		
 	}
 
@@ -109,9 +111,14 @@ public class EmployeeServiceImplTest implements BaseTest {
     @Test
     @TrackTime(message = "testCreateEmployee ")
     public void testCreateEmployee() {
-        employe = new Employe("foulen", "benfoulen", "foulen@gmail.com", true, Role.ADMINISTRATEUR);
-        assertNotNull(employeServiceImpl1.ajouterEmploye(employe));
-      log.info("Employee added with success");
+    	Employe employe = new Employe("foulen", "benfoulen", "foulen@gmail.com", true, Role.ADMINISTRATEUR);
+    	employeServiceImpl1.ajouterEmploye(employe);
+    	 
+    	assertThat(employe.getPrenom()).isEqualTo("benfoulen");
+    
+    	log.info("Employee added with success");
+    	
+
      
     }
     
@@ -216,15 +223,18 @@ public class EmployeeServiceImplTest implements BaseTest {
     	boolean test = true;
     	employeServiceImpl1.affecterEmployeADepartement(employeA.getId(), department.getId());
     	Optional<Employe> empoloye = employeRepo.findById(employeA.getId());
-    	List<Departement>departementsList = empoloye.get().getDepartements();
-    	for(int i = 0 ; i<departementsList.size(); i++) {
-    		if(departementsList.get(i).getId() ==department.getId() ) {
-    			test = false;
-    		}
-    		
+    	
+    	if(empoloye.isPresent()) {
+    		List<Departement>departementsList = empoloye.get().getDepartements();
+        	for(int i = 0 ; i<departementsList.size(); i++) {
+        		if(departementsList.get(i).getId() ==department.getId() ) {
+        			test = false;
+        		}
+        		
+        	}
+    		assertThat(test).isFalse();
+    		log.info("employee departement are desaffected with success");
     	}
-		assertThat(test).isFalse();
-		log.info("employee departement are desaffected with success");
     }
 
    	
