@@ -19,7 +19,7 @@ services:
       dockerfile: "Dockerfile"
     restart: on-failure
     ports:
-      - 8086:8086
+      - 8081:8081
     environment:
       SPRING_APPLICATION_JSON: '{
         "spring.datasource.url"  : "jdbc:mysql://mysqldb:3306/timeSheetdb?useSSL=false",
