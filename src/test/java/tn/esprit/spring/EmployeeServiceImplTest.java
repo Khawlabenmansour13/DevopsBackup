@@ -71,8 +71,7 @@ public class EmployeeServiceImplTest implements BaseTest {
 	@Before
 	public void setUp() {
 
-		
-		log.info("add objects");
+	
 		Entreprise entreprise = entrepriseRepository.save(new Entreprise("HP","equipement"));
 		department = departementRepository.save(new Departement("RH"));
 		department.setEntreprise(entreprise);
