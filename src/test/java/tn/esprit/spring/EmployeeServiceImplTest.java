@@ -50,8 +50,12 @@ public class EmployeeServiceImplTest implements BaseTest {
 	
 	@Autowired
 	EntrepriseServiceImpl entrepriseServiceImpl;
-	private Employe employeA,employeB,employeC;
+	private Employe employeA;
+	private Employe employeB;
+	private Employe employeC;
 	private Departement department;
+	
+	private String mail ="foulen@gmail.com";
 	
 	@Test
      public void contextLoads() {
@@ -63,14 +67,14 @@ public class EmployeeServiceImplTest implements BaseTest {
 	@Override
 	@Before
 	public void setUp() {
-        log.info("add all objects");
+       
 		Entreprise entreprise = entrepriseRepository.save(new Entreprise("HP","equipement"));
 		department = departementRepository.save(new Departement("RH"));
 		department.setEntreprise(entreprise);
 		departementRepository.save(department);
 		employeA = new Employe("user", "benUser", "benuser@gmail.com", false, Role.INGENIEUR);		
 		 employeB = new Employe("employe", "benEmployee", "employe@gmail.com", true, Role.ADMINISTRATEUR);
-		 employeC = new Employe("Foulen", "benFoulen", "foulen@gmail.com", true, Role.CHEF_DEPARTEMENT);
+		 employeC = new Employe("Foulen", "benFoulen", mail, true, Role.CHEF_DEPARTEMENT);
 		
 		List<Employe> employeList = new ArrayList<>();
 		    employeList.add(employeA);
@@ -99,7 +103,7 @@ public class EmployeeServiceImplTest implements BaseTest {
     @Test
     @TrackTime(message = "testCreateEmployee ")
     public void testCreateEmployee() {
-    	Employe employe = new Employe("foulen", "benfoulen", "foulen@gmail.com", true, Role.ADMINISTRATEUR);
+    	Employe employe = new Employe("foulen", "benfoulen", mail, true, Role.ADMINISTRATEUR);
     	employeServiceImpl1.ajouterEmploye(employe);
     	assertThat(employe.getPrenom()).isEqualTo("benfoulen");
         log.info("Employee added with success");
@@ -113,10 +117,10 @@ public class EmployeeServiceImplTest implements BaseTest {
       	
         if(employeC.getId()!=0) {
     		  employeServiceImpl1.mettreAjourEmailByEmployeId(
-    				  "foulen@gmail.com"
+    				  mail
     				  ,employeC.getId());
     		  assertEquals(employeC.getEmail()
- 	        		 ,"foulen@gmail.com");
+ 	        		 ,mail);
     		  log.info("Employee updated with success");
 
     	 }
