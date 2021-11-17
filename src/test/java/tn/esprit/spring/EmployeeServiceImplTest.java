@@ -50,50 +50,38 @@ public class EmployeeServiceImplTest implements BaseTest {
 	
 	@Autowired
 	EntrepriseServiceImpl entrepriseServiceImpl;
-	private Employe employeA;
+	private Employe employeA,employeB,employeC;
 	private Departement department;
 	
-	
-     @Test
+	@Test
      public void contextLoads() {
     		//Context Load init for test Methods
 
      }
      
- final  Logger log = Logger.getLogger(EmployeeServiceImplTest.class);
- 
- 
- 
-
- 
- 
+    final  Logger log = Logger.getLogger(EmployeeServiceImplTest.class);
 	@Override
 	@Before
 	public void setUp() {
-
-		
-		log.info("add all objects");
+        log.info("add all objects");
 		Entreprise entreprise = entrepriseRepository.save(new Entreprise("HP","equipement"));
 		department = departementRepository.save(new Departement("RH"));
 		department.setEntreprise(entreprise);
 		departementRepository.save(department);
 		employeA = new Employe("user", "benUser", "benuser@gmail.com", false, Role.INGENIEUR);		
-		Employe employeB = new Employe("employe", "benEmployee", "employe@gmail.com", true, Role.ADMINISTRATEUR);
-		Employe employeC = new Employe("Foulen", "benFoulen", "foulen@gmail.com", true, Role.CHEF_DEPARTEMENT);
+		 employeB = new Employe("employe", "benEmployee", "employe@gmail.com", true, Role.ADMINISTRATEUR);
+		 employeC = new Employe("Foulen", "benFoulen", "foulen@gmail.com", true, Role.CHEF_DEPARTEMENT);
 		
 		List<Employe> employeList = new ArrayList<>();
 		    employeList.add(employeA);
 		    employeList.add(employeB);
 		    employeList.add(employeC);
-		    
-	
 		employeRepo.saveAll(employeList);
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.YEAR, 2020);
 		cal.set(Calendar.MONTH, Calendar.JANUARY);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		Date dateRepresentation = cal.getTime();
-		
 		Contrat contrat = new Contrat(dateRepresentation, "TypeCont", 5000);
 		contrat.setEmploye(employeA);
 		contratRepository.save(contrat);
@@ -108,18 +96,13 @@ public class EmployeeServiceImplTest implements BaseTest {
 		
 	}
 
- 
- 
     @Test
     @TrackTime(message = "testCreateEmployee ")
     public void testCreateEmployee() {
     	Employe employe = new Employe("foulen", "benfoulen", "foulen@gmail.com", true, Role.ADMINISTRATEUR);
     	employeServiceImpl1.ajouterEmploye(employe);
-    	 
     	assertThat(employe.getPrenom()).isEqualTo("benfoulen");
-    
-    	log.info("Employee added with success");
-    	
+        log.info("Employee added with success");
 
      
     }
@@ -127,18 +110,18 @@ public class EmployeeServiceImplTest implements BaseTest {
     @Test
     @TrackTime(message = "mettreAjourEmailByEmployeId ")
     public void mettreAjourEmailByEmployeId() {
-      	Employe employee = new Employe();
-      	employee.setId(7);
-        if(employee.getId()!=0) {
-    		  employee.setEmail("user@gmail.com");
-    		  employeServiceImpl1.mettreAjourEmailByEmployeId(employee.getEmail(),employee.getId());
-    		  assertEquals(employee.getEmail()
- 	        		 ,"user@gmail.com");
+      	
+        if(employeC.getId()!=0) {
+    		  employeServiceImpl1.mettreAjourEmailByEmployeId(
+    				  "foulen@gmail.com"
+    				  ,employeC.getId());
+    		  assertEquals(employeC.getEmail()
+ 	        		 ,"foulen@gmail.com");
     		  log.info("Employee updated with success");
 
     	 }
     	 else {
-    		 assertNull(employee);
+    		 assertNull(employeC);
     	      log.warn("Updated : Employee not found ");
 
     	 }
@@ -147,15 +130,9 @@ public class EmployeeServiceImplTest implements BaseTest {
     @Test
     @TrackTime(message = "testDeleteEmployeById ")
     public void testDeleteEmployeById () {
-    	Employe employee = new Employe();
-        employee.setEmail("employe@gmail.com");
-        employee.setNom("deletedEmpNom");
-        employee.setPrenom("deletedEmpPrenom");
-        employee.setRole(Role.INGENIEUR);
-        employee.setActif(true);
-        employeServiceImpl1.ajouterEmploye(employee);
-       if(employeRepo.findById(employee.getId()).isPresent()) {
-    	   employeServiceImpl1.deleteEmployeById(employee.getId());
+    	
+       if(employeRepo.findById(employeB.getId()).isPresent()) {
+    	   employeServiceImpl1.deleteEmployeById(employeB.getId());
     	   assertTrue(true);
  		  log.info("Employee deleted with success");
 
@@ -171,13 +148,12 @@ public class EmployeeServiceImplTest implements BaseTest {
     @Test
     @TrackTime(message = "testGetEmployeById ")
     public void testGetEmployeById() {
-    	Employe employee = new Employe();
-        employee.setId(5);
+    	
         
         assertEquals("benUser", 
         		employeServiceImpl1.getEmployePrenomById(employeA.getId())
         		);
-        log.info( "Employe Prenom : "+employeServiceImpl1.getEmployePrenomById(5));
+        log.info( "Employe Prenom : "+employeServiceImpl1.getEmployePrenomById(employeA.getId()));
     }
 
     @Test
